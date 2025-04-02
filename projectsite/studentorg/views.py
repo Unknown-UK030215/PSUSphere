@@ -31,6 +31,7 @@ class OrganizationUpdateView(UpdateView):
     success_url = reverse_lazy('organization-list')
 
 class OrganizationList(ListView):
+    model = Organization
     template_name = 'organization/list.html'
     paginate_by = 5
 
@@ -92,12 +93,22 @@ class StudentList(ListView):
     template_name = 'student/list.html'
     paginate_by = 5
 
+
 class StudentCreateView(CreateView):
     model = Student
     form_class = StudentForm
     template_name = 'student/add.html'
     success_url = reverse_lazy('student-list')
 
+def student_list(request):
+    query = request.GET.get("q", "")
+    students = Student.objects.filter(name__icontains=query) if query else Student.objects.all()
+    return render(request, "student/list.html", {"object_list": students, "query": query})
+
+
+def student_list(request):
+    students = Student.objects.all()
+    return render(request, 'student/list.html', {'object_list': students})
 
 
 # College

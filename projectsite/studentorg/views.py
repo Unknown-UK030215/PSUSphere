@@ -15,7 +15,13 @@ from django.db.models import Q
 class HomePageView(ListView):
     model = Organization
     context_object_name = 'home'
+    success_url = reverse_lazy('home-page')
     template_name = 'home.html'
+
+class Typography(ListView):
+    model = Organization
+    content_object_name = 'typography'
+    success_url = reverse_lazy('typography-list')
 
 
 # Organization
@@ -101,15 +107,9 @@ class StudentCreateView(CreateView):
     success_url = reverse_lazy('student-list')
 
 def student_list(request):
-    query = request.GET.get("q", "")
-    students = Student.objects.filter(name__icontains=query) if query else Student.objects.all()
-    return render(request, "student/list.html", {"object_list": students, "query": query})
-
-
-def student_list(request):
     students = Student.objects.all()
-    return render(request, 'student/list.html', {'object_list': students})
-
+    print("Students fetched:", students) 
+    return render(request, "student/list.html", {"object_list": students})
 
 # College
 

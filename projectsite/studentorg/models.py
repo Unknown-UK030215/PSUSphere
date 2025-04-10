@@ -10,20 +10,20 @@ class BaseModel(models.Model):
         abstract = True
 
 class College(BaseModel):
-    college_name = models.CharField(max_length=150)
+    college_name = models.CharField(max_length=150, unique=True)
 
     def __str__(self):
         return self.college_name
 
 class Program(BaseModel):
-    prog_name = models.CharField(max_length=150)
+    prog_name = models.CharField(max_length=150, unique=True)
     college = models.ForeignKey(College, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.prog_name
 
 class Organization(BaseModel):
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250, unique=True)
     college = models.ForeignKey(
         College, null=True, blank=True, on_delete=models.CASCADE)
     description = models.CharField(max_length=500)
@@ -32,11 +32,11 @@ class Organization(BaseModel):
         return self.name
     
 class Student(BaseModel):
-    student_id = models.CharField(max_length=15)
+    student_id = models.CharField(max_length=255, unique=True)
     lastname = models.CharField(max_length=25)
     firstname = models.CharField(max_length=25)
     middlename = models.CharField(max_length=25, blank=True, null=True)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, default=1)
     
     def __str__(self):
         return f"{self.lastname},{self.firstname}"

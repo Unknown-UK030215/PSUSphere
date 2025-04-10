@@ -7,12 +7,12 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">List of OrgMember</div>
-                        <div class="card-category">Page Subtitle</div>
+                        <div class="card-category">Shows all the list of Organization Member</div>
                     </div>
-                    <br /> 
+                    <br />
                         <div class="col-md-12 row">
                             <div class="col-md-6">
-                                <form class="navbar-left navbar-form nav-search mr-md-3" action="{% url 'orgmember-list' %}">
+                                <form class="navbar-left navbar-form nav-search mr-md-3" action="">
                                     <div class="input-group">
                                         <input type="text" placeholder="Search ..." class="form-control" />
                                         <div class="input-group-append">
@@ -25,9 +25,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="pull-right">
-                                    <a href="{% url 'orgmember-add' %}" class="btn btn-success btn-rounded">
-                                        Add OrgMember
-                                    </a>
+                                    <a href="{% url 'orgmember-add' %}" class="btn btn-success btn-rounded">Add OrgMember</a>
                                 </div>
                             </div>
                         </div>
@@ -59,9 +57,9 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="4" style="text-align: center">
-                                        <p class="text-sm font-weight-bold mb-0">No Records Found</p>
-                                    </td>
+                                    <td colspan = "4" styles = "text-align: center">
+                                        <p class = "text-sm font-weight-bold mb-0">No Records Found</p>
+                                </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

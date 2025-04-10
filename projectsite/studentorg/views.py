@@ -70,9 +70,12 @@ class OrgMemberUpdateView(UpdateView):
 
 class OrgMemberList(ListView):
     model = OrgMember
-    context_object_name = 'orgmember'
+    context_object_name = 'object_list'  # Changed from 'orgmember' to match template
     template_name = 'orgmember/list.html'
     paginate_by = 5
+
+    def get_queryset(self):
+        return OrgMember.objects.select_related('student', 'organization')
 
 class OrgMemberCreateView(CreateView):
     model = OrgMember
@@ -95,9 +98,19 @@ class StudentUpdateView(UpdateView):
 
 class StudentList(ListView):
     model = Student
-    context_object_name = 'student'
     template_name = 'student/list.html'
     paginate_by = 5
+
+    def get_queryset(self):
+        qs = Student.objects.select_related('program')
+        if self.request.GET.get("q"):
+            query = self.request.GET.get('q')
+            qs = qs.filter(
+                Q(student_id__icontains=query) |
+                Q(lastname__icontains=query) |
+                Q(firstname__icontains=query)
+            )
+        return qs
 
 
 class StudentCreateView(CreateView):
@@ -126,9 +139,15 @@ class CollegeUpdateView(UpdateView):
 
 class CollegeList(ListView):
     model = College
-    context_object_name = 'college'
     template_name = 'college/list.html'
     paginate_by = 5
+
+    def get_queryset(self):
+        qs = College.objects.all()
+        if self.request.GET.get("q"):
+            query = self.request.GET.get('q')
+            qs = qs.filter(college_name__icontains=query)
+        return qs
 
 class CollegeCreateView(CreateView):
     model = College

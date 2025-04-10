@@ -37,18 +37,18 @@
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
+                                    <th scope="col">Student ID</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">College</th>
-                                    <th scope="col">Description</th>
+                                    <th scope="col">Program</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
-                                    <td>{{ object.name }}</td>
-                                    <td>{{ object.college }}</td>
-                                    <td>{{ object.description }}</td>
+                                    <td>{{ object.student_id }}</td>
+                                    <td>{{ object.lastname }}, {{ object.firstname }} {% if object.middlename %}{{ object.middlename }}{% endif %}</td>
+                                    <td>{{ object.program }}</td>
                                     <td>
                                         <a href="{% url 'student-edit' object.id %}" class="btn btn-primary btn-sm">Edit</a>
                                         <form action="{% url 'student-del' object.id %}" method="post" style="display:inline">

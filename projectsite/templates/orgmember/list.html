@@ -30,6 +30,12 @@
                             </div>
                         </div>
                     <div class="card-body">
+                        <!-- Debug information -->
+                        {% if object_list %}
+                            <div class="alert alert-info">
+                                Number of records: {{ object_list|length }}
+                            </div>
+                        {% endif %}
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
@@ -42,9 +48,9 @@
                             <tbody>
                                 {% for object in object_list %}
                                 <tr>
-                                    <td>{{ object.name }}</td>
-                                    <td>{{ object.college }}</td>
-                                    <td>{{ object.description }}</td>
+                                    <td>{{ object.student.firstname }} {{ object.student.lastname }}</td>
+                                    <td>{{ object.organization.college }}</td>
+                                    <td>{{ object.organization.description }}</td>
                                     <td>
                                         <a href="{% url 'orgmember-edit' object.id %}" class="btn btn-primary btn-sm">Edit</a>
                                         <form action="{% url 'orgmember-del' object.id %}" method="post" style="display:inline">

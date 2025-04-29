@@ -1,18 +1,196 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
 <div class="content">
     <div class="container-fluid">
-        <h4 class="page-title">Home</h4>
+        <h4 class="page-title">Dashboard Analytics</h4>
+        
+        <!-- First Row -->
         <div class="row">
-            <div class="col-mid-12">
+            <!-- Organizations by College -->
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Page Title</div>
-                        <div class="card-category">Page Subtitle</div>
+                        <h4 class="card-title">Organizations by College</h4>
                     </div>
-                    <div class="card-body">Hello, world</div>
+                    <div class="card-body">
+                        <div id="orgByCollege" class="ct-chart"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Students by Program -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Students by Program</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="studentsByProgram" class="ct-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="row">
+            <!-- Member Growth Trend -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Membership Growth</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="memberGrowth" class="ct-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Organization Distribution -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Organization Distribution</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="orgDistribution" class="ct-chart"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Add Chartist.js library -->
+<link rel="stylesheet" href="{% static 'assets/css/plugins/chartist.min.css' %}">
+<script src="{% static 'assets/js/plugin/chartist/chartist.min.js' %}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Organizations by College Chart (Bar Chart)
+    new Chartist.Bar('#orgByCollege', {
+        labels: JSON.parse('{{ college_labels|default:"[]"|escapejs }}'),
+        series: [JSON.parse('{{ org_by_college|default:"[]"|escapejs }}')]
+    }, {
+        height: '500px',  // Increased height for all colleges
+        seriesBarDistance: 10,
+        reverseData: true,
+        horizontalBars: true,
+        axisY: {
+            offset: 300,  // Increased offset for longer college names
+            position: 'start'
+        },
+        axisX: {
+            onlyInteger: true,
+            labelInterpolationFnc: function(value) {
+                return value;
+            },
+            scaleMinSpace: 50,
+            ticks: [0, 1, 2, 3]  // Fixed scale from 0 to 3
+        },
+        chartPadding: {
+            top: 20,
+            right: 30,
+            bottom: 20,
+            left: 20
+        }
+    });
+
+    // Students by Program Chart (Bar Chart)
+    new Chartist.Bar('#studentsByProgram', {
+        labels: JSON.parse('{{ program_labels|default:"[]"|escapejs }}'),
+        series: [JSON.parse('{{ students_by_program|default:"[]"|escapejs }}')]
+    }, {
+        height: '250px',
+        seriesBarDistance: 10,
+        axisY: {
+            onlyInteger: true
+        }
+    });
+
+    // Member Growth Trend (Line Chart)
+    new Chartist.Line('#memberGrowth', {
+        labels: JSON.parse('{{ months_labels|default:"[]"|escapejs }}'),
+        series: [JSON.parse('{{ member_growth|default:"[]"|escapejs }}')]
+    }, {
+        height: '250px',
+        fullWidth: true,
+        chartPadding: {
+            right: 40
+        }
+    });
+
+    // Organization Distribution (Pie Chart)
+    new Chartist.Pie('#orgDistribution', {
+        labels: ['SITE', 'ACS', 'CRIM', 'CTE', 'CAH', 'CHMT', 'NURSING', 'HRM'],  // Updated college labels
+        series: [25, 15, 12, 12, 10, 10, 8, 8]  // Adjusted distribution values
+    }, {
+        height: '250px',
+        donut: true,
+        donutWidth: 60,
+        donutSolid: true,
+        startAngle: 270,
+        showLabel: true,
+        plugins: [
+            Chartist.plugins.tooltip()
+        ]
+    });
+});
+</script>
+
+<style>
+.ct-chart {
+    position: relative;
+}
+.ct-label {
+    font-size: 14px !important;
+    color: #000 !important;
+    fill: #000 !important;
+}
+.ct-series-a .ct-bar,
+.ct-series-a .ct-line,
+.ct-series-a .ct-point {
+    stroke: #1D62F0;
+}
+.ct-series-a .ct-slice-donut {
+    stroke: #1D62F0;
+}
+
+/* Updated styles for Organizations by College chart */
+#orgByCollege {
+    margin: 20px 0;
+}
+
+#orgByCollege .ct-label.ct-horizontal {
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+}
+
+#orgByCollege .ct-label.ct-vertical {
+    font-size: 11px;  
+    color: #333;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.2;
+    padding-right: 15px;
+    text-align: left;
+    font-weight: 500;
+}
+
+#orgByCollege .ct-bar {
+    stroke: #1D62F0;
+    stroke-width: 15px;  
+}
+
+#orgByCollege .ct-grid {
+    stroke: rgba(0, 0, 0, 0.1);
+    stroke-dasharray: 2px;
+}
+
+#orgByCollege .ct-grid.ct-horizontal {
+    stroke-width: 1px;
+}
+</style>
 {% endblock %}

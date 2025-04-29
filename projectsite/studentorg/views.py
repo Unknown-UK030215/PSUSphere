@@ -9,6 +9,10 @@ from django.contrib.auth.decorators import login_required
 from typing import Any
 from django.db.models.query import QuerySet
 from django.db.models import Q
+from django.views.generic import TemplateView
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+import json
 
 
 @method_decorator(login_required, name='dispatch')
@@ -181,3 +185,46 @@ class ProgramCreateView(CreateView):
     form_class = ProgramForm
     template_name = 'program/add.html'
     success_url = reverse_lazy('program-list')
+
+
+class HomePageView(TemplateView):
+    template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Organizations by College
+        org_college_data = Organization.objects.values('college__college_name').annotate(
+            count=Count('id')
+        ).order_by('-count')
+        
+        context['college_labels'] = json.dumps([item['college__college_name'] for item in org_college_data])
+        context['org_by_college'] = [item['count'] for item in org_college_data]
+
+        # Students by Program
+        student_program_data = Student.objects.values('program__prog_name').annotate(
+            count=Count('id')
+        ).order_by('-count')
+        
+        context['program_labels'] = json.dumps([item['program__prog_name'] for item in student_program_data])
+        context['students_by_program'] = [item['count'] for item in student_program_data]
+
+        # Member Growth over time
+        member_growth = OrgMember.objects.annotate(
+            month=TruncMonth('date_joined')
+        ).values('month').annotate(
+            count=Count('id')
+        ).order_by('month')
+
+        context['months_labels'] = json.dumps([item['month'].strftime('%b %Y') for item in member_growth])
+        context['member_growth'] = [item['count'] for item in member_growth]
+
+        # Organization Distribution
+        org_distribution = Organization.objects.annotate(
+            member_count=Count('orgmember')
+        ).order_by('-member_count')
+
+        context['org_names'] = json.dumps([org.name for org in org_distribution])
+        context['org_members'] = [org.member_count for org in org_distribution]
+
+        return context
